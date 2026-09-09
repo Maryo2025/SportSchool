@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>SportSchool — Mini Escuela Deportiva</title>
+<style>
+:root{--bg:#f5f7fb;--card:#fff;--text:#182230;--muted:#6b7280;--primary:#6d4aff;--secondary:#16b8a6;--border:#e7eaf0;--danger:#ef4444;--shadow:0 8px 28px #18223012}
+*{box-sizing:border-box}body{margin:0;font-family:Inter,system-ui,Segoe UI,Arial,sans-serif;background:var(--bg);color:var(--text)}
+button,input,select,textarea{font:inherit}button{cursor:pointer;border:0}.app{display:flex;min-height:100vh}
+.sidebar{width:245px;background:#fff;border-right:1px solid var(--border);padding:22px 14px;position:fixed;inset:0 auto 0 0;z-index:5}
+.logo{display:flex;align-items:center;gap:10px;font-weight:800;font-size:20px;padding:5px 10px 25px}.logo span{font-size:27px}
+.nav button{display:flex;width:100%;align-items:center;gap:12px;background:transparent;padding:12px 13px;border-radius:12px;color:#596273;text-align:left;margin:3px 0}
+.nav button:hover,.nav button.active{background:#eeeaff;color:var(--primary);font-weight:700}
+.main{margin-left:245px;width:calc(100% - 245px);padding:28px;max-width:1500px}.top{display:flex;justify-content:space-between;align-items:center;margin-bottom:24px}.top h1{margin:0;font-size:28px}.pill{background:#eeeaff;color:var(--primary);padding:7px 11px;border-radius:999px;font-weight:700;font-size:13px}
+.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}.grid2{display:grid;grid-template-columns:1.35fr 1fr;gap:18px}.card{background:var(--card);border:1px solid var(--border);border-radius:17px;padding:20px;box-shadow:var(--shadow);margin-bottom:18px}.stat{display:flex;justify-content:space-between;align-items:flex-start}.stat .icon{font-size:28px}.stat .num{font-size:30px;font-weight:800;margin-top:8px}.muted{color:var(--muted);font-size:14px}.section-title{font-size:19px;font-weight:800;margin:0 0 15px}.btn{background:var(--primary);color:#fff;padding:10px 15px;border-radius:11px;font-weight:700}.btn.secondary{background:#e9f9f6;color:#087f72}.btn.gray{background:#eef0f4;color:#424b5a}.btn.danger{background:#feecec;color:#b42323}.actions{display:flex;gap:8px;flex-wrap:wrap}
+table{width:100%;border-collapse:collapse}th,td{text-align:left;padding:12px 9px;border-bottom:1px solid var(--border);font-size:14px}th{color:var(--muted);font-size:12px;text-transform:uppercase}
+.badge{display:inline-block;padding:5px 9px;border-radius:999px;background:#f0f2f6;font-size:12px;font-weight:700}.grade{font-size:18px;font-weight:800}.good{color:#078b62}.mid{color:#b7791f}.low{color:#d33}
+.progress{height:9px;background:#eceef3;border-radius:99px;overflow:hidden}.progress>i{display:block;height:100%;background:var(--primary);border-radius:99px}
+.barrow{display:grid;grid-template-columns:125px 1fr 45px;gap:10px;align-items:center;margin:12px 0}.bar{height:14px;background:#eceef3;border-radius:99px;overflow:hidden}.bar i{display:block;height:100%;background:var(--secondary)}
+.modal{position:fixed;inset:0;background:#11182788;display:none;align-items:center;justify-content:center;padding:18px;z-index:20}.modal.show{display:flex}.modalbox{background:#fff;width:min(650px,100%);max-height:90vh;overflow:auto;border-radius:18px;padding:22px}.formgrid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.field{display:flex;flex-direction:column;gap:6px;margin-bottom:12px}.field.full{grid-column:1/-1}.field label{font-size:13px;font-weight:700}.field input,.field select,.field textarea{padding:10px 12px;border:1px solid #dfe3ea;border-radius:10px;outline:none}.field textarea{min-height:100px;resize:vertical}
+.empty{padding:30px;text-align:center;color:var(--muted)}.hero{background:linear-gradient(120deg,#6d4aff,#8d70ff);color:#fff;border:0}.hero .muted{color:#eee}.hero .btn{background:#fff;color:#5a3ee0}
+.achievement{display:flex;gap:13px;align-items:center;padding:12px 0;border-bottom:1px solid var(--border)}.achievement:last-child{border:0}.medal{font-size:30px}.locked{opacity:.4;filter:grayscale(1)}
+.examq{padding:13px 0;border-bottom:1px solid var(--border)}.examq label{display:block;padding:5px 0}
+.mobilebar{display:none}
+@media(max-width:900px){.sidebar{display:none}.main{margin:0;width:100%;padding:18px 14px 82px}.grid{grid-template-columns:repeat(2,1fr)}.grid2{grid-template-columns:1fr}.mobilebar{display:flex;position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1px solid var(--border);z-index:10;justify-content:space-around;padding:7px}.mobilebar button{background:transparent;color:#687080;font-size:11px}.mobilebar b{display:block;font-size:20px}.formgrid{grid-template-columns:1fr}}
+@media(max-width:520px){.grid{grid-template-columns:1fr 1fr}.top h1{font-size:23px}.card{padding:15px}.barrow{grid-template-columns:90px 1fr 38px}}
+
+.login-screen{position:fixed;inset:0;background:linear-gradient(135deg,#6d4aff,#16b8a6);display:flex;align-items:center;justify-content:center;padding:20px;z-index:100}
+.login-box{width:min(430px,100%);background:#fff;border-radius:22px;padding:30px;box-shadow:0 25px 70px #0003}
+.login-box h1{margin:8px 0}.role-tabs{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:20px 0 14px}
+.role-tabs button{padding:12px;border-radius:11px;background:#eef0f4;font-weight:800;color:#596273}
+.role-tabs button.active{background:#eeeaff;color:#5a3ee0}
+.login-error{color:#b42323;background:#feecec;border-radius:10px;padding:10px;margin:10px 0;display:none}
+.user-pill{display:flex;align-items:center;gap:8px}
+.logout{background:#eef0f4;color:#424b5a;padding:8px 11px;border-radius:10px;font-weight:700}
+</style>
+</head>
+<body>
+
+<div class="login-screen" id="loginScreen">
+  <div class="login-box">
+    <div style="font-size:42px">🏅</div>
+    <h1>SportSchool</h1>
+    <div class="muted">Inicia sesión para entrar a la mini escuela deportiva.</div>
+    <div class="role-tabs">
+      <button id="studentTab" class="active" onclick="chooseRole('student')">👨‍🎓 Estudiante</button>
+      <button id="adminTab" onclick="chooseRole('admin')">👨‍🏫 Profesor</button>
+    </div>
+    <div class="field"><label>Contraseña de demostración</label><input id="loginPassword" type="password" placeholder="Escribe la contraseña"></div>
+    <div class="login-error" id="loginError">Contraseña incorrecta.</div>
+    <button class="btn" style="width:100%;margin-top:5px" onclick="login()">Entrar</button>
+    <div class="muted" style="margin-top:16px;font-size:12px">
+      Demo: estudiante <b>Alumno2026!</b> · profesor <b>Admin2026!</b><br>
+      Estas contraseñas son solo para la versión de prueba local.
+    </div>
+  </div>
+</div>
+<div class="app">
+<aside class="sidebar">
+  <div class="logo"><span>🏅</span> SportSchool</div>
+  <nav class="nav" id="nav"></nav>
+</aside>
+<main class="main">
+  <div class="top"><div><h1 id="title">Inicio</h1><div class="muted">Mini escuela de gimnasia y deportes</div></div><div class="user-pill"><span class="pill" id="rolePill">Estudiante</span><button class="logout" onclick="logout()">Salir</button></div></div>
+  <div id="view"></div>
+</main>
+<div class="mobilebar" id="mobilebar"></div>
+</div>
+
+<div class="modal" id="modal"><div class="modalbox"><div id="modalContent"></div></div></div>
+
+<script>
+const KEY="sportschool_v1";
+const defaultSubjects=["Atletismo","Deportes","Fuerza","Preparación física"];
+const subjectIcons={"Atletismo":"🏃","Deportes":"🏅","Fuerza":"💪","Preparación física":"🏋️"};
+function subjects(){return data.subjects||defaultSubjects}
+function iconForSubject(s){return subjectIcons[s]||"📚"}
+const defaultData={
+ subjects:["Atletismo","Deportes","Fuerza","Preparación física"],
+ tasks:[],
+ student:{name:"Alex",level:"Nivel inicial",joined:"2026-08-01",avatar:"🤸"},
+ grades:[
+  {id:1,sport:"Gimnasia",activity:"Flexibilidad",date:"2026-08-05",grade:9.4,weight:20,note:"Muy buen avance."},
+  {id:2,sport:"Gimnasia",activity:"Equilibrio",date:"2026-08-12",grade:9.0,weight:20,note:"Mejorar estabilidad."},
+  {id:3,sport:"Fútbol",activity:"Conducción",date:"2026-08-08",grade:8.4,weight:20,note:"Buen control del balón."},
+  {id:4,sport:"Baloncesto",activity:"Pases",date:"2026-08-15",grade:9.6,weight:20,note:"Excelente precisión."},
+  {id:5,sport:"Atletismo",activity:"Velocidad",date:"2026-08-20",grade:9.2,weight:20,note:"Muy buen esfuerzo."}],
+ notes:[
+  {id:1,date:"2026-08-25",title:"Excelente progreso",category:"Excelente",text:"Ha mejorado mucho su flexibilidad y coordinación.",sport:"Gimnasia"},
+  {id:2,date:"2026-08-20",title:"Buen esfuerzo",category:"Buen progreso",text:"Mantiene una actitud positiva durante los entrenamientos.",sport:"Preparación física"}],
+ attendance:[
+  {id:1,date:"2026-08-04",sport:"Gimnasia",status:"Presente",text:""},
+  {id:2,date:"2026-08-11",sport:"Gimnasia",status:"Presente",text:""},
+  {id:3,date:"2026-08-18",sport:"Fútbol",status:"Presente",text:""},
+  {id:4,date:"2026-08-22",sport:"Atletismo",status:"Ausente",text:""},
+  {id:5,date:"2026-08-25",sport:"Gimnasia",status:"Presente",text:""}],
+ exams:[
+  {id:1,title:"Seguridad en gimnasia",sport:"Gimnasia",date:"2026-08-27",period:"1.º período",weight:30,period:"1.º período",weight:30,questions:[
+   {q:"¿Qué debemos hacer antes de empezar un ejercicio?",a:["Calentar","Correr sin parar","Nada"],correct:0},
+   {q:"¿Es importante respetar las instrucciones?",a:["Sí","No"],correct:0}],result:9.0},
+  {id:2,title:"Reglas básicas del fútbol",sport:"Fútbol",date:"2026-08-29",questions:[
+   {q:"¿Cuántos jugadores de un equipo están en el campo normalmente?",a:["11","5","7"],correct:0},
+   {q:"¿Con qué parte del cuerpo no puede tocar el balón un jugador de campo?",a:["Pie","Cabeza","Mano"],correct:2}],result:null}],
+ achievements:[
+  {id:1,icon:"🏆",name:"Primer entrenamiento",desc:"Completar una actividad",unlocked:true},
+  {id:2,icon:"⭐",name:"Primera nota excelente",desc:"Obtener 9.0 o más",unlocked:true},
+  {id:3,icon:"💪",name:"10 entrenamientos",desc:"Completar 10 clases",unlocked:false},
+  {id:4,icon:"🔥",name:"Racha de 5",desc:"Asistir a 5 clases seguidas",unlocked:false},
+  {id:5,icon:"🤸",name:"Maestro de gimnasia",desc:"Promedio de gimnasia ≥ 8.5",unlocked:false},
+  {id:6,icon:"🎯",name:"Promedio superior a 8.0",desc:"Promedio general ≥ 8.0",unlocked:true}]
+};
+let data=JSON.parse(localStorage.getItem(KEY)||"null")||structuredClone(defaultData);
+const periods=["1.º período","2.º período","3.º período","4.º período"];
+function periodForDate(date){
+  const m=String(date||"").slice(0,7);
+  if(m==="2026-08"||m==="2026-09"||m==="2026-10") return "1.º período";
+  if(m==="2026-11"||m==="2026-12"||m==="2027-01") return "2.º período";
+  if(m==="2027-02"||m==="2027-03"||m==="2027-04") return "3.º período";
+  return "4.º período";
+}
+function migratePeriods(){
+  (data.grades||[]).forEach(g=>{if(!g.period)g.period=periodForDate(g.date)});
+  (data.exams||[]).forEach(e=>{if(!e.period)e.period="1.º período";});
+  save();
+}
+migratePeriods();
+let page="inicio";
+function save(){localStorage.setItem(KEY,JSON.stringify(data))}
+function normalizeData(){data.subjects=Array.isArray(data.subjects)?data.subjects:defaultSubjects.slice(); data.tasks=Array.isArray(data.tasks)?data.tasks:[]; if(!data.subjects.length)data.subjects=defaultSubjects.slice()}
+normalizeData();
+function avg(arr){
+  if(!arr.length)return 0;
+  const weighted=arr.some(x=>Number(x.weight)>0);
+  if(!weighted)return arr.reduce((s,x)=>s+Number(x.grade||0),0)/arr.length;
+  const total=arr.reduce((s,x)=>s+Number(x.weight||0),0);
+  return total?arr.reduce((s,x)=>s+Number(x.grade||0)*Number(x.weight||0),0)/total:0;
+}
+function gradeSummary(arr){
+  const total=arr.reduce((s,x)=>s+Number(x.weight||0),0);
+  return {avg:avg(arr),weight:total};
+}
+function attendancePct(){return data.attendance.length?data.attendance.filter(x=>x.status==="Presente").length/data.attendance.length*100:0}
+function esc(s){return String(s??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]))}
+function gradeClass(g){return g>=8?"good":g>=6?"mid":"low"}
+
+let currentRole = null;
+let selectedRole = "student";
+const SESSION_KEY = "sportschool_role";
+
+function chooseRole(r){
+  selectedRole=r;
+  document.getElementById("studentTab").classList.toggle("active",r==="student");
+  document.getElementById("adminTab").classList.toggle("active",r==="admin");
+  document.getElementById("loginError").style.display="none";
+}
+function login(){
+  const pass=document.getElementById("loginPassword").value;
+  const ok=(selectedRole==="student" && pass==="Alumno2026!") || (selectedRole==="admin" && pass==="Admin2026!");
+  if(!ok){document.getElementById("loginError").style.display="block";return;}
+  currentRole=selectedRole;
+  sessionStorage.setItem(SESSION_KEY,currentRole);
+  document.getElementById("loginScreen").style.display="none";
+  render();
+}
+function logout(){
+  sessionStorage.removeItem(SESSION_KEY);
+  currentRole=null;
+  document.getElementById("loginPassword").value="";
+  document.getElementById("loginScreen").style.display="flex";
+  chooseRole("student");
+}
+function isAdmin(){return currentRole==="admin"}
+function canEdit(){return isAdmin()}
+function ensureAdmin(action){
+  if(!isAdmin()){alert("Esta función solo está disponible para el profesor/administrador.");return false}
+  return true
+}
+
+function setPage(p){page=p; render()}
+const menu=[["inicio","🏠","Inicio"],["tareas","📝","Tareas"],["materias","📚","Materias"],["calificaciones","📝","Calificaciones"],["deportes","🏅","Deportes"],["examenes","🧪","Exámenes"],["anotaciones","📓","Anotaciones"],["asistencia","📅","Asistencia"],["estadisticas","📊","Estadísticas"],["logros","🏆","Logros"],["perfil","👤","Perfil"]];
+function renderNav(){
+  const visibleMenu = isAdmin() ? menu : menu;
+  document.getElementById("nav").innerHTML=visibleMenu.map(x=>`<button class="${page===x[0]?"active":""}" onclick="setPage('${x[0]}')">${x[1]} ${x[2]}</button>`).join("");
+  document.getElementById("mobilebar").innerHTML=visibleMenu.slice(0,5).map(x=>`<button onclick="setPage('${x[0]}')"><b>${x[1]}</b>${x[2]}</button>`).join("");
+  const rp=document.getElementById("rolePill"); if(rp) rp.textContent=isAdmin()?"👨‍🏫 Profesor":"👨‍🎓 Estudiante";
+}
+function render(){renderNav();document.getElementById("title").textContent=menu.find(x=>x[0]===page)?.[2]||"Inicio";document.getElementById("view").innerHTML=pages[page]();}
+
+const pages={
+inicio:()=>{let a=avg(data.grades), ap=attendancePct(); return `
+<div class="card hero"><div style="font-size:15px">${isAdmin()?"👨‍🏫 Panel del profesor":"👨‍🎓 Área del estudiante"}</div><div style="font-size:15px">¡Hola, ${esc(data.student.name)}! 👋</div><h2 style="margin:7px 0">Tu progreso deportivo</h2><div class="muted">Sigue entrenando y alcanzando nuevos logros.</div></div>
+<div class="card"><div class="top"><h3 class="section-title">📝 Tareas pendientes</h3><button class="btn gray" onclick="setPage('tareas')">Ver tareas</button></div>${data.tasks.filter(t=>!t.completed).slice(0,5).map(t=>`<div class="achievement"><div class="medal">${iconForSubject(t.subject)}</div><div><b>${esc(t.title)}</b><div class="muted">${esc(t.subject)}${t.pdfName?" · 📄 PDF":""}</div></div></div>`).join("")||empty()}</div>
+<div class="grid">
+ ${stat("⭐","Promedio",a.toFixed(1)+" / 10.0")} ${stat("📅","Asistencia",ap.toFixed(0)+"%")} ${stat("🧪","Exámenes",data.exams.length)} ${stat("🏆","Logros",data.achievements.filter(x=>x.unlocked).length+"/"+data.achievements.length)}
+</div>
+<div class="grid2"><div class="card"><h3 class="section-title">📈 Evolución de calificaciones</h3>${evolution()}</div><div class="card"><h3 class="section-title">🏅 Rendimiento por deporte</h3>${subjects().map(s=>{let g=avg(data.grades.filter(x=>x.sport===s));return `<div class="barrow"><span>${icons[s]} ${s}</span><div class="bar"><i style="width:${g/10*100}%"></i></div><b>${g?g.toFixed(1):"—"}</b></div>`}).join("")}</div></div>
+<div class="grid2"><div class="card"><h3 class="section-title">📝 Últimas notas</h3>${gradeTable(data.grades.slice().sort((a,b)=>b.date.localeCompare(a.date)).slice(0,5),false)}</div><div class="card"><h3 class="section-title">📓 Últimas anotaciones</h3>${data.notes.slice().sort((a,b)=>b.date.localeCompare(a.date)).slice(0,4).map(n=>`<div class="achievement"><div class="medal">${categoryIcon(n.category)}</div><div><b>${esc(n.title)}</b><div class="muted">${esc(n.text)}</div></div></div>`).join("")||empty()}</div></div>`},
+tareas:()=>{const list=data.tasks.slice().sort((a,b)=>(b.created||"").localeCompare(a.created||"")); if(!list.length)return `<div class="card"><h3 class="section-title">📝 Tareas</h3>${isAdmin()?`<button class="btn" onclick="taskForm()">+ Crear tarea</button>`:""}<div class="empty">No hay tareas todavía.</div></div>`; return `<div class="top" style="margin-bottom:12px"><div><h3 class="section-title">📝 Tareas</h3><div class="muted">${isAdmin()?"Crea y administra actividades para el estudiante.":"Consulta tus tareas pendientes."}</div></div>${isAdmin()?`<button class="btn" onclick="taskForm()">+ Crear tarea</button>`:""}</div><div class="grid2">${list.map(t=>`<div class="card"><div class="badge">${esc(t.subject)}</div><h3>${esc(t.title)}</h3><div class="muted">${esc(t.description||"")}</div><div style="margin:12px 0">${t.pdfName?`📄 ${esc(t.pdfName)}`:"Sin PDF adjunto"}</div><div class="actions">${t.pdfData?`<button class="btn secondary" onclick="downloadTaskPDF(${t.id})">⬇️ Descargar PDF</button><button class="btn gray" onclick="printTaskPDF(${t.id})">🖨️ Imprimir</button>`:""}${!isAdmin()&&!t.completed?`<button class="btn" onclick="completeTask(${t.id})">✅ Marcar completada</button>`:""}${!isAdmin()&&t.completed?`<span class="badge">✅ Completada</span>`:""}${isAdmin()?`<button class="btn gray" onclick="taskForm(${t.id})">✏️ Editar</button><button class="btn danger" onclick="deleteTask(${t.id})">🗑️ Eliminar</button>`:""}</div></div>`).join("")}</div>`},
+materias:()=>`<div class="card"><div class="top"><div><h3 class="section-title">📚 Materias</h3><div class="muted">Estas son las materias que aparecen en SportSchool.</div></div>${isAdmin()?`<button class="btn" onclick="subjectForm()">+ Agregar materia</button>`:""}</div><div class="grid">${subjects().map(s=>`<div class="card"><div style="font-size:34px">${iconForSubject(s)}</div><h3>${esc(s)}</h3>${isAdmin()?`<div class="actions"><button class="btn gray" onclick="subjectForm('${esc(s)}')">✏️ Editar</button><button class="btn danger" onclick="deleteSubject('${esc(s)}')">🗑️ Eliminar</button></div>`:""}</div>`).join("")}</div></div>`,
+calificaciones:()=>{const all=data.grades.slice().sort((a,b)=>b.date.localeCompare(a.date));return `<div class="grid">${periods.map(p=>{let rows=all.filter(x=>(x.period||"1.º período")===p),g=avg(rows);return `<div class="card"><div class="muted">${p}</div><div class="num ${gradeClass(g)}">${g?g.toFixed(2):"—"}</div><div class="muted">${rows.length} actividades · ${rows.reduce((s,x)=>s+Number(x.weight||0),0)}% de pesos</div><div class="progress"><i style="width:${g/10*100}%"></i></div></div>`}).join("")}<div class="card"><div class="muted">Promedio final</div><div class="num ${gradeClass(avg(all))}">${avg(all)?avg(all).toFixed(2):"—"}</div><div class="muted">Escala 1.0 a 10.0</div><div class="progress"><i style="width:${avg(all)/10*100}%"></i></div></div></div><div class="card"><div class="top" style="margin-bottom:12px"><h3 class="section-title">Todas las calificaciones</h3>${isAdmin() ? '<button class="btn" onclick="gradeForm()">+ Agregar calificación</button>' : ''}</div><div class="field" style="max-width:260px"><label>Filtrar período</label><select id="periodFilter" onchange="filterGrades(this.value)"><option value="Todos">Todos</option>${periods.map(p=>`<option>${p}</option>`).join("")}</select></div><div id="gradesTable">${gradeTable(all,isAdmin())}</div></div>`},
+deportes:()=>`<div class="grid">${subjects().map(s=>{let gs=data.grades.filter(x=>x.sport===s),g=avg(gs);return `<div class="card"><div style="font-size:34px">${icons[s]}</div><h3>${s}</h3><div class="stat"><div><div class="muted">Promedio</div><div class="num ${gradeClass(g)}">${g?g.toFixed(1):"—"}</div></div><div class="muted">${gs.length} actividades</div></div><div class="progress" style="margin-top:15px"><i style="width:${g/10*100}%"></i></div></div>`}).join("")}</div>`,
+examenes:()=>`<div class="card"><div class="top"><h3 class="section-title">Mis exámenes</h3>${isAdmin() ? '<button class="btn" onclick="examForm()">+ Crear examen</button>' : ''}</div>${data.exams.map(e=>`<div class="achievement"><div class="medal">🧪</div><div style="flex:1"><b>${esc(e.title)}</b><div class="muted">${e.sport} · ${e.period||"1.º período"} · ${e.questions.length} preguntas · ${e.date}${e.weight?` · ${e.weight}%`:""}</div></div><b class="${e.result==null?"mid":"good"}">${e.result==null?"Pendiente":e.result.toFixed(1)+"/10"}</b><div class="actions">${isAdmin()?`<button class="btn gray" onclick="showShareExam(${e.id})">🔗 Compartir</button><button class="btn danger" onclick="delExam(${e.id})">Eliminar</button>`:`<button class="btn gray" onclick="takeExam(${e.id})">${e.result==null?"Resolver":"Ver / resolver"}</button>`}</div></div>`).join("")||empty()}</div>`,
+anotaciones:()=>`<div class="card"><div class="top"><h3 class="section-title">Anotaciones del profesor</h3>${isAdmin() ? '<button class="btn" onclick="noteForm()">+ Nueva anotación</button>' : ''}</div>${data.notes.slice().sort((a,b)=>b.date.localeCompare(a.date)).map(n=>`<div class="achievement"><div class="medal">${categoryIcon(n.category)}</div><div style="flex:1"><b>${esc(n.title)}</b><span class="badge">${esc(n.category)}</span><div class="muted">${n.date} · ${n.sport||"General"}</div><div style="margin-top:5px">${esc(n.text)}</div></div>${isAdmin() ? `<button class="btn danger" onclick="delNote(${n.id})">Eliminar</button>` : ""}</div>`).join("")||empty()}</div>`,
+asistencia:()=>`<div class="grid"><div class="card stat"><div><div class="muted">Asistencia</div><div class="num">${attendancePct().toFixed(0)}%</div></div><div class="icon">📅</div></div><div class="card stat"><div><div class="muted">Presentes</div><div class="num good">${data.attendance.filter(x=>x.status==="Presente").length}</div></div><div class="icon">✅</div></div><div class="card stat"><div><div class="muted">Ausencias</div><div class="num low">${data.attendance.filter(x=>x.status==="Ausente").length}</div></div><div class="icon">❌</div></div><div class="card stat"><div><div class="muted">Excusas</div><div class="num mid">${data.attendance.filter(x=>x.status==="Excusa").length}</div></div><div class="icon">📌</div></div></div><div class="card"><div class="top"><h3 class="section-title">Registro</h3>${isAdmin() ? '<button class="btn" onclick="attendanceForm()">+ Registrar clase</button>' : ''}</div>${data.attendance.slice().sort((a,b)=>b.date.localeCompare(a.date)).map(x=>`<div class="achievement"><div class="medal">${x.status==="Presente"?"✅":x.status==="Ausente"?"❌":"📌"}</div><div style="flex:1"><b>${x.date}</b><div class="muted">${x.sport} · ${x.status}</div></div>${isAdmin() ? `<button class="btn danger" onclick="delAttendance(${x.id})">Eliminar</button>` : ""}</div>`).join("")}</div>`,
+estadisticas:()=>`<div class="grid">${periods.map(p=>{let g=avg(data.grades.filter(x=>(x.period||"1.º período")===p));return `<div class="card"><div class="muted">${p}</div><div class="num">${g?g.toFixed(2):"—"}</div></div>`}).join("")}<div class="card"><div class="muted">Promedio general</div><div class="num">${avg(data.grades).toFixed(2)}</div></div><div class="card"><div class="muted">Mejor nota</div><div class="num good">${data.grades.length?Math.max(...data.grades.map(x=>+x.grade)).toFixed(1):"—"}</div></div><div class="card"><div class="muted">Actividades</div><div class="num">${data.grades.length}</div></div><div class="card"><div class="muted">Exámenes aprobados</div><div class="num">${data.exams.filter(x=>x.result>=6).length}</div></div></div><div class="grid2"><div class="card"><h3 class="section-title">📊 Promedio por deporte</h3>${subjects().map(s=>{let g=avg(data.grades.filter(x=>x.sport===s));return `<div class="barrow"><span>${icons[s]} ${s}</span><div class="bar"><i style="width:${g/10*100}%"></i></div><b>${g?g.toFixed(2):"—"}</b></div>`}).join("")}</div><div class="card"><h3 class="section-title">📈 Notas en orden</h3>${evolution(true)}</div></div>`,
+logros:()=>`<div class="grid">${data.achievements.map(a=>`<div class="card ${a.unlocked?"":"locked"}"><div class="medal">${a.icon}</div><h3>${esc(a.name)}</h3><div class="muted">${esc(a.desc)}</div><div style="margin-top:15px"><span class="badge">${a.unlocked?"Desbloqueado":"Bloqueado"}</span></div></div>`).join("")}</div>`,
+perfil:()=>`<div class="card" style="max-width:700px"><div style="font-size:65px">${data.student.avatar}</div><h2>${esc(data.student.name)}</h2><div class="muted">${esc(data.student.level)}</div><hr style="border:0;border-top:1px solid var(--border);margin:20px 0"><p><b>Fecha de ingreso:</b> ${data.student.joined}</p><p><b>Promedio:</b> ${avg(data.grades).toFixed(1)}/10.0</p><p><b>Asistencia:</b> ${attendancePct().toFixed(0)}%</p>${isAdmin() ? '<button class="btn" onclick="profileForm()">Editar perfil</button>' : ''} <button class="btn gray" onclick="exportData()">Exportar datos</button> ${isAdmin()?`<button class="btn gray" onclick="document.getElementById('importFile').click()">Importar</button><input id="importFile" type="file" accept=".json" style="display:none" onchange="importData(event)">`:""}</div>`
+};
+function stat(i,t,n){return `<div class="card stat"><div><div class="muted">${t}</div><div class="num">${n}</div></div><div class="icon">${i}</div></div>`}
+function empty(){return `<div class="empty">Todavía no hay registros.</div>`}
+function filterGrades(p){const rows=data.grades.slice().sort((a,b)=>b.date.localeCompare(a.date));document.getElementById("gradesTable").innerHTML=gradeTable(p==="Todos"?rows:rows.filter(x=>(x.period||"1.º período")===p),isAdmin())}
+function gradeTable(rows,edit){if(!rows.length)return empty();return `<div style="overflow:auto"><table><thead><tr><th>Actividad</th><th>Deporte</th><th>Período</th><th>Fecha</th><th>Nota</th>${edit?"<th></th>":""}</tr></thead><tbody>${rows.map(x=>`<tr><td><b>${esc(x.activity)}</b><div class="muted">${esc(x.note)}</div></td><td>${icons[x.sport]||""} ${x.sport}</td><td><span class="badge">${x.period||"1.º período"}</span></td><td>${x.date}</td><td><span class="grade ${gradeClass(x.grade)}">${Number(x.grade).toFixed(1)}</span></td>${edit?`<td><button class="btn gray" onclick="gradeForm(${x.id})">Editar</button> <button class="btn danger" onclick="delGrade(${x.id})">Eliminar</button></td>`:""}</tr>`).join("")}</tbody></table></div>`}
+function evolution(full=false){let rows=data.grades.slice().sort((a,b)=>a.date.localeCompare(b.date));if(!rows.length)return empty();return rows.map((x,i)=>`<div class="barrow"><span>${full?x.date:"Actividad "+(i+1)}</span><div class="bar"><i style="width:${x.grade/10*100}%"></i></div><b>${x.grade.toFixed(1)}</b></div>`).join("")}
+function categoryIcon(c){return c==="Excelente"?"⭐":c==="Buen progreso"?"👍":c==="Observación"?"📌":c==="Aspecto por mejorar"?"💪":"🏆"}
+function subjectForm(oldName=""){if(!ensureAdmin("administrar materias"))return;showModal(`<h2>${oldName?"Editar":"Agregar"} materia</h2><div class="field"><label>Nombre de la materia</label><input id="subjectName" value="${esc(oldName)}"></div><div class="actions"><button class="btn" onclick="saveSubject('${esc(oldName)}')">Guardar</button><button class="btn gray" onclick="closeModal()">Cancelar</button></div>`)}
+function saveSubject(oldName){if(!ensureAdmin("administrar materias"))return;const n=document.getElementById("subjectName").value.trim();if(!n)return alert("Escribe un nombre.");if(oldName){if(subjects().includes(n)&&n!==oldName)return alert("Esa materia ya existe.");data.subjects=data.subjects.map(x=>x===oldName?n:x);data.grades.forEach(g=>{if(g.sport===oldName)g.sport=n});data.attendance.forEach(a=>{if(a.sport===oldName)a.sport=n});}else{if(subjects().includes(n))return alert("Esa materia ya existe.");data.subjects.push(n)}save();closeModal();render()}
+function deleteSubject(name){if(!ensureAdmin("eliminar materias"))return;if(!confirm(`¿Eliminar la materia "${name}"?`))return;data.subjects=data.subjects.filter(x=>x!==name);save();render()}
+function taskForm(id=null){if(!ensureAdmin("crear tareas"))return;const t=id?data.tasks.find(x=>x.id===id):null;showModal(`<h2>${t?"Editar":"Crear"} tarea</h2><div class="field"><label>Título</label><input id="ttitle" value="${esc(t?.title||"")}"></div><div class="field"><label>Materia</label><select id="tsubject">${subjects().map(x=>`<option ${t?.subject===x?"selected":""}>${esc(x)}</option>`).join("")}</select></div><div class="field"><label>Descripción</label><textarea id="tdesc">${esc(t?.description||"")}</textarea></div><div class="field"><label>PDF (opcional)</label><input id="tpdf" type="file" accept="application/pdf"></div>${t?.pdfName?`<div class="muted">PDF actual: ${esc(t.pdfName)}. Si eliges otro, se reemplaza.</div>`:""}<div class="actions"><button class="btn" onclick="saveTask(${id||0})">Guardar tarea</button><button class="btn gray" onclick="closeModal()">Cancelar</button></div>`)}
+function saveTask(id){if(!ensureAdmin("crear tareas"))return;const title=document.getElementById("ttitle").value.trim()||"Tarea";const subject=document.getElementById("tsubject").value;const desc=document.getElementById("tdesc").value.trim();const f=document.getElementById("tpdf").files[0];const finish=(pdfData,pdfName)=>{let t=id?data.tasks.find(x=>x.id===id):{id:Date.now(),created:new Date().toISOString(),completed:false};t.title=title;t.subject=subject;t.description=desc;if(pdfData){t.pdfData=pdfData;t.pdfName=pdfName}if(!id)data.tasks.push(t);save();closeModal();render()};if(f){if(f.type!=="application/pdf")return alert("Solo se permiten archivos PDF.");const r=new FileReader();r.onload=()=>finish(r.result,f.name);r.readAsDataURL(f)}else finish(null,null)}
+function completeTask(id){const t=data.tasks.find(x=>x.id===id);if(t){t.completed=true;t.completedAt=new Date().toISOString();save();render()}}
+function deleteTask(id){if(!ensureAdmin("eliminar tareas"))return;if(confirm("¿Eliminar esta tarea?")){data.tasks=data.tasks.filter(x=>x.id!==id);save();render()}}
+function downloadTaskPDF(id){const t=data.tasks.find(x=>x.id===id);if(!t?.pdfData)return;const a=document.createElement("a");a.href=t.pdfData;a.download=t.pdfName||"tarea.pdf";a.click()}
+function printTaskPDF(id){const t=data.tasks.find(x=>x.id===id);if(!t?.pdfData)return;const w=window.open("");if(!w)return;w.document.write(`<iframe src="${t.pdfData}" style="width:100%;height:100%;border:0"></iframe>`);w.document.close();setTimeout(()=>w.print(),1000)}
+
+function showModal(content){document.getElementById("modalContent").innerHTML=content;document.getElementById("modal").classList.add("show")}
+function closeModal(){document.getElementById("modal").classList.remove("show")}
+document.getElementById("modal").onclick=e=>{if(e.target.id==="modal")closeModal()}
+function gradeForm(id=null){let x=id?data.grades.find(g=>g.id===id):null;showModal(`<h2>${x?"Editar":"Agregar"} calificación</h2><div class="formgrid">
+<div class="field"><label>Actividad</label><input id="gact" value="${esc(x?.activity||"")}"></div><div class="field"><label>Deporte</label><select id="gsport">${subjects().map(s=>`<option ${x?.sport===s?"selected":""}>${s}</option>`).join("")}</select></div>
+<div class="field"><label>Fecha</label><input type="date" id="gdate" value="${x?.date||new Date().toISOString().slice(0,10)}"></div><div class="field"><label>Período</label><select id="gperiod">${periods.map(p=>`<option ${x?.period===p?"selected":(!x&&p==="1.º período"?"selected":"")}>${p}</option>`).join("")}</select></div><div class="field"><label>Nota (1 a 10)</label><input type="number" min="1" max="10" step=".1" id="ggrade" value="${x?.grade??10}"></div>
+<div class="field"><label>Peso (%)</label><input type="number" id="gweight" value="${x?.weight??20}"></div><div class="field"><label>Observación</label><input id="gnote" value="${esc(x?.note||"")}"></div></div>
+<div class="actions"><button class="btn" onclick="saveGrade(${id||0})">Guardar</button><button class="btn gray" onclick="closeModal()">Cancelar</button></div>`)}
+function saveGrade(id){if(!ensureAdmin("modificar datos"))return; let o={id:id||Date.now(),activity:document.getElementById("gact").value.trim()||"Actividad",sport:document.getElementById("gsport").value,date:document.getElementById("gdate").value,period:document.getElementById("gperiod").value,grade:Math.max(1,Math.min(10,+document.getElementById("ggrade").value||1)),weight:+document.getElementById("gweight").value||0,note:document.getElementById("gnote").value};if(id){let i=data.grades.findIndex(x=>x.id===id);data.grades[i]=o}else data.grades.push(o);save();closeModal();render()}
+function delGrade(id){if(!ensureAdmin("modificar datos"))return; if(confirm("¿Eliminar esta calificación?")){data.grades=data.grades.filter(x=>x.id!==id);save();render()}}
+function noteForm(){showModal(`<h2>Nueva anotación</h2><div class="formgrid"><div class="field"><label>Título</label><input id="ntitle"></div><div class="field"><label>Fecha</label><input type="date" id="ndate" value="${new Date().toISOString().slice(0,10)}"></div><div class="field"><label>Categoría</label><select id="ncat"><option>Excelente</option><option>Buen progreso</option><option>Observación</option><option>Aspecto por mejorar</option><option>Logro</option></select></div><div class="field"><label>Deporte</label><select id="nsport"><option>General</option>${subjects().map(s=>`<option>${s}</option>`).join("")}</select></div><div class="field full"><label>Anotación</label><textarea id="ntext"></textarea></div></div><button class="btn" onclick="saveNote()">Guardar</button> <button class="btn gray" onclick="closeModal()">Cancelar</button>`)}
+function saveNote(){if(!ensureAdmin("modificar datos"))return; data.notes.push({id:Date.now(),date:ndate.value,title:ntitle.value||"Anotación",category:ncat.value,text:ntext.value,sport:nsport.value});save();closeModal();render()}
+function delNote(id){if(!ensureAdmin("modificar datos"))return; if(confirm("¿Eliminar anotación?")){data.notes=data.notes.filter(x=>x.id!==id);save();render()}}
+function attendanceForm(){showModal(`<h2>Registrar clase</h2><div class="formgrid"><div class="field"><label>Fecha</label><input type="date" id="adate" value="${new Date().toISOString().slice(0,10)}"></div><div class="field"><label>Deporte</label><select id="asport">${subjects().map(s=>`<option>${s}</option>`).join("")}</select></div><div class="field"><label>Estado</label><select id="astatus"><option>Presente</option><option>Ausente</option><option>Excusa</option></select></div></div><button class="btn" onclick="saveAttendance()">Guardar</button> <button class="btn gray" onclick="closeModal()">Cancelar</button>`)}
+function saveAttendance(){if(!ensureAdmin("modificar datos"))return; data.attendance.push({id:Date.now(),date:adate.value,sport:asport.value,status:astatus.value,text:""});save();closeModal();render()}
+function delAttendance(id){if(!ensureAdmin("modificar datos"))return; if(confirm("¿Eliminar registro?")){data.attendance=data.attendance.filter(x=>x.id!==id);save();render()}}
+let buildingExam=[];
+
+function examForm(){
+  if(!ensureAdmin("crear examen"))return;
+  buildingExam=[];
+  renderExamBuilder();
+}
+function renderExamBuilder(){
+  showModal(`<h2>🧪 Crear examen</h2>
+  <div class="field"><label>Nombre del examen</label><input id="etitle" placeholder="Ej. Examen de gimnasia — Período 1"></div>
+  <div class="formgrid">
+    <div class="field"><label>Deporte</label><select id="esport">${subjects().map(s=>`<option>${s}</option>`).join("")}</select></div>
+    <div class="field"><label>Período</label><select id="eperiod"><option>1.º período</option><option>2.º período</option><option>3.º período</option><option>4.º período</option></select></div>
+    <div class="field"><label>Fecha</label><input type="date" id="edate" value="${new Date().toISOString().slice(0,10)}"></div>
+    <div class="field"><label>Tiempo (minutos, opcional)</label><input type="number" id="etime" min="1" placeholder="Ej. 30"></div><div class="field"><label>Peso en el promedio (%)</label><input type="number" id="eweight" min="0" max="100" value="30"></div>
+  </div>
+  <hr style="border:0;border-top:1px solid var(--border);margin:18px 0">
+  <div class="top"><h3 class="section-title">Preguntas (${buildingExam.length})</h3><button class="btn" onclick="addQuestion()">+ Agregar pregunta</button></div>
+  <div id="questionBuilder">${buildingExam.length?buildingExam.map((q,i)=>questionEditor(q,i)).join(""):empty()}</div>
+  <div class="actions" style="margin-top:18px"><button class="btn" onclick="createExamFromBuilder()">Crear examen</button><button class="btn gray" onclick="closeModal()">Cancelar</button></div>`);
+}
+function questionEditor(q,i){
+  return `<div class="card" style="box-shadow:none;background:#fafbfe">
+    <div class="top"><b>Pregunta ${i+1}</b><button class="btn danger" onclick="removeQuestion(${i})">Eliminar</button></div>
+    <div class="field"><label>Pregunta</label><textarea id="qq${i}" oninput="buildingExam[${i}].q=this.value">${esc(q.q)}</textarea></div>
+    <div class="field"><label>Tipo</label><select id="qt${i}" onchange="changeQuestionType(${i},this.value)">
+      <option value="mc" ${q.type==="mc"?"selected":""}>Selección múltiple</option>
+      <option value="tf" ${q.type==="tf"?"selected":""}>Verdadero / Falso</option>
+      <option value="text" ${q.type==="text"?"selected":""}>Respuesta escrita</option>
+    </select></div>
+    ${q.type==="text"?`<div class="field"><label>Respuesta correcta esperada</label><input value="${esc(q.answer||"")}" oninput="buildingExam[${i}].answer=this.value"></div>`:
+    `<div class="field"><label>Opciones (marca la correcta)</label>${q.a.map((a,j)=>`<div style="display:flex;gap:8px;margin:5px 0"><input type="radio" name="correct${i}" ${q.correct===j?"checked":""} onchange="buildingExam[${i}].correct=${j}"><input style="flex:1;padding:9px;border:1px solid #dfe3ea;border-radius:9px" value="${esc(a)}" oninput="buildingExam[${i}].a[${j}]=this.value"></div>`).join("")}</div>`}
+  </div>`;
+}
+function addQuestion(){
+  buildingExam.push({q:"",type:"mc",a:["","",""],correct:0});
+  renderExamBuilder();
+}
+function removeQuestion(i){buildingExam.splice(i,1);renderExamBuilder()}
+function changeQuestionType(i,type){
+  buildingExam[i].type=type;
+  if(type==="tf"){buildingExam[i].a=["Verdadero","Falso"];buildingExam[i].correct=0}
+  else if(type==="text"){buildingExam[i].a=[];buildingExam[i].answer=""}
+  else {buildingExam[i].a=["","",""];buildingExam[i].correct=0}
+  renderExamBuilder();
+}
+function createExamFromBuilder(){
+  if(!ensureAdmin("crear examen"))return;
+  const title=document.getElementById("etitle").value.trim()||"Nuevo examen";
+  if(!buildingExam.length){alert("Agrega al menos una pregunta.");return}
+  if(buildingExam.some(q=>!q.q.trim())){alert("Completa todas las preguntas.");return}
+  const e={id:Date.now(),title,sport:document.getElementById("esport").value,period:document.getElementById("eperiod").value,date:document.getElementById("edate").value,time:+document.getElementById("etime").value||null,weight:+document.getElementById("eweight").value||30,questions:structuredClone(buildingExam),result:null,linkToken:crypto.randomUUID()};
+  data.exams.push(e);save();closeModal();render();
+  setTimeout(()=>showShareExam(e.id),50);
+}
+function showShareExam(id){
+  const e=data.exams.find(x=>x.id===id);
+  const link=location.href.split("#")[0]+"#examen="+e.linkToken;
+  showModal(`<h2>✅ Examen creado</h2><p><b>${esc(e.title)}</b></p><p class="muted">Comparte este enlace con el estudiante. Al abrirlo se mostrará directamente este examen.</p>
+  <div class="field"><label>Enlace</label><input id="shareLink" value="${esc(link)}" readonly></div>
+  <div class="actions"><button class="btn" onclick="copyExamLink()">🔗 Copiar enlace</button><button class="btn gray" onclick="closeModal()">Cerrar</button></div>`);
+}
+function copyExamLink(){
+  const input=document.getElementById("shareLink");
+  navigator.clipboard?.writeText(input.value).then(()=>alert("Enlace copiado.")).catch(()=>{input.select();document.execCommand("copy");alert("Enlace copiado.")});
+}
+function saveExam(){ examForm(); }
+function delExam(id){if(!ensureAdmin("modificar datos"))return; if(confirm("¿Eliminar examen?")){data.exams=data.exams.filter(x=>x.id!==id);save();render()}}
+let examTimer=null;
+function takeExam(id){
+  let e=data.exams.find(x=>x.id===id); if(!e)return;
+  let html=`<h2>🧪 ${esc(e.title)}</h2><div class="muted">${e.sport} · ${e.period||"1.º período"} · ${e.questions.length} preguntas${e.time?` · ⏱️ ${e.time} min`:""}</div><div id="examClock" class="badge" style="display:inline-block;margin:12px 0"></div>`;
+  html+=e.questions.map((q,i)=>`<div class="examq"><b>${i+1}. ${esc(q.q)}</b>${q.type==="text"?`<textarea id="textq${i}" placeholder="Escribe tu respuesta..."></textarea>`:q.a.map((a,j)=>`<label><input type="radio" name="q${i}" value="${j}"> ${esc(a)}</label>`).join("")}</div>`).join("");
+  html+=`<button class="btn" onclick="gradeExam(${id})">Terminar examen</button> <button class="btn gray" onclick="closeExamModal()">Cerrar</button>`;
+  showModal(html);
+  if(e.time){let left=e.time*60;clearInterval(examTimer);const tick=()=>{const el=document.getElementById("examClock");if(!el)return clearInterval(examTimer);el.textContent=`Tiempo restante: ${Math.floor(left/60)}:${String(left%60).padStart(2,"0")}`;if(left<=0){clearInterval(examTimer);gradeExam(id,true)}left--};tick();examTimer=setInterval(tick,1000)}
+}
+function closeExamModal(){clearInterval(examTimer);closeModal()}
+function gradeExam(id,auto=false){
+  if(!isAdmin() && currentRole!=="student")return;
+  let e=data.exams.find(x=>x.id===id),ok=0,answered=0;
+  e.questions.forEach((q,i)=>{
+    if(q.type==="text"){
+      const r=document.getElementById(`textq${i}`); const val=(r?.value||"").trim();
+      if(val)answered++;
+      if(val && q.answer && val.toLowerCase()===String(q.answer).trim().toLowerCase())ok++;
+    }else{
+      let r=document.querySelector(`input[name="q${i}"]:checked`); if(r){answered++;if(+r.value===q.correct)ok++}
+    }
+  });
+  e.result=Math.round((ok/e.questions.length*10)*10)/10;
+  e.answered=answered; e.completedAt=new Date().toISOString();
+  // Put the exam result into the gradebook so it can participate in the period average.
+  if(e.result!==null){
+    const activity="Examen: "+e.title;
+    let g=data.grades.find(x=>x.examId===e.id);
+    const record={id:g?.id||Date.now(),activity,sport:e.sport,date:e.date,period:e.period||"1.º período",grade:e.result,weight:e.weight||30,note:`Resultado automático · ${ok}/${e.questions.length} correctas`,examId:e.id};
+    if(g){Object.assign(g,record)}else data.grades.push(record);
+  }
+  save();closeExamModal();render();alert(`Resultado: ${e.result.toFixed(1)}/10.0${auto?" (tiempo terminado)":""}`)
+}
+function profileForm(){showModal(`<h2>Editar estudiante</h2><div class="field"><label>Nombre</label><input id="pname" value="${esc(data.student.name)}"></div><div class="field"><label>Nivel</label><input id="plevel" value="${esc(data.student.level)}"></div><div class="field"><label>Emoji/avatar</label><input id="pavatar" value="${esc(data.student.avatar)}"></div><button class="btn" onclick="saveProfile()">Guardar</button>`)}
+function saveProfile(){if(!ensureAdmin("modificar datos"))return; data.student.name=pname.value||"Alex";data.student.level=plevel.value||"Nivel inicial";data.student.avatar=pavatar.value||"🤸";save();closeModal();render()}
+function exportData(){let b=new Blob([JSON.stringify(data,null,2)],{type:"application/json"}),a=document.createElement("a");a.href=URL.createObjectURL(b);a.download="sportschool-datos.json";a.click()}
+function importData(ev){if(!ensureAdmin("importar datos"))return; let f=ev.target.files[0];if(!f)return;let r=new FileReader();r.onload=()=>{try{data=JSON.parse(r.result);save();render();alert("Datos importados correctamente.")}catch(e){alert("El archivo no es válido.")}};r.readAsText(f)}
+function openExamFromHash(){
+  const h=location.hash;
+  if(!h.startsWith("#examen="))return false;
+  const token=decodeURIComponent(h.slice(8));
+  const e=data.exams.find(x=>x.linkToken===token);
+  if(!e)return false;
+  page="examenes";
+  if(currentRole==="student") setTimeout(()=>takeExam(e.id),150);
+  else setTimeout(()=>showShareExam(e.id),150);
+  return true;
+}
+
+currentRole=sessionStorage.getItem(SESSION_KEY);
+if(currentRole==="student" || currentRole==="admin"){document.getElementById("loginScreen").style.display="none";render();openExamFromHash()}else{chooseRole("student")}
+</script>
+</body>
+</html>
